@@ -21,7 +21,7 @@ class KerasVanillaMF:
               epoch=300,
               batch_size=100,
               verbose=2,
-              save=False):
+              save=True):
         self.build(latent_dim, learning_rate, l2_rate)
         self._train(epoch,
                     batch_size,
@@ -33,6 +33,7 @@ class KerasVanillaMF:
     def predict(self):
         user, item = self.data['user'], self.data['item']
         self.data['predicted'] = self.model.predict([user, item])
+        self.data.to_csv('predicted_keras.csv')
 
     def recommend(self, num_rec_items):
         users = max(self.data['user'].unique())
@@ -45,7 +46,7 @@ class KerasVanillaMF:
         self.result = pd.DataFrame(columns[result.reshape(-1)].reshape(-1, num_rec_items),
                                    columns=['top%s' % i for i in range(1, num_rec_items + 1)],
                                    index=np.arange(users+1))
-        self.result.to_csv('result.csv')
+        self.result.to_csv('result_keras.csv')
 
     def plot_embedded_vector(self, save=True):
         user_vectors, item_vectors = self.model.get_weights()

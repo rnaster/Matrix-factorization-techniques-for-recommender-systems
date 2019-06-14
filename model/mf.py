@@ -96,8 +96,8 @@ class VanillaMF(Visualization):
         print('finish')
         self.plot_cost(epoch, every_print, save)
         if latent_dim == 2:
-            self.viz_latent_space(self.user_matrix,
-                                  self.item_matrix,
+            self.viz_latent_space(self.user_matrix.values,
+                                  self.item_matrix.values,
                                   save)
         self.predict()
 
@@ -109,8 +109,7 @@ class VanillaMF(Visualization):
                verbose):
         data = self.data\
             .pivot('user', 'item', 'rating')\
-            .fillna(0)\
-            .values
+            .fillna(0)
         mask_matrix = data > 0
 
         for i in range(1, epoch + 1):
@@ -134,6 +133,7 @@ class VanillaMF(Visualization):
         item_matrix = self.item_matrix.loc[data[1]].values
         predicted = user_matrix * item_matrix
         self.data['predicted'] = predicted.sum(axis=1)
+        self.data.to_csv('predicted_numpy.csv')
 
     def print_params(self, users, items, latent_dim):
         print('the number of trainable params: {:,}\n'
@@ -154,4 +154,4 @@ class VanillaMF(Visualization):
         self.result = pd.DataFrame(columns[result.reshape(-1)].reshape(-1, num_rec_items),
                                    columns=['top%s' % i for i in range(1, num_rec_items+1)],
                                    index=np.sort(self.data['user'].unique()))
-        self.result.to_csv('result.csv')
+        self.result.to_csv('result_numpy.csv')
