@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 class KerasVanillaMF:
     def __init__(self, data: pd.DataFrame):
         """
-
         :param data: column = [user, item, rating]
         """
         self.data = data
@@ -27,7 +26,7 @@ class KerasVanillaMF:
                     batch_size,
                     verbose)
         self.plot_cost(save)
-        if latent_dim == 2: self.plot_embedded_vector(save)
+        if latent_dim == 2: self.viz_latent_space(save)
         self.predict()
 
     def predict(self):
@@ -36,6 +35,9 @@ class KerasVanillaMF:
         self.data.to_csv('predicted_keras.csv')
 
     def recommend(self, num_rec_items):
+        """
+        do recommend num_rec_items items excluding the observed items.
+        """
         users = max(self.data['user'].unique())
         items = max(self.data['item'].unique())
         columns = np.arange(items+1)
@@ -48,7 +50,7 @@ class KerasVanillaMF:
                                    index=np.arange(users+1))
         self.result.to_csv('result_keras.csv')
 
-    def plot_embedded_vector(self, save=True):
+    def viz_latent_space(self, save=True):
         user_vectors, item_vectors = self.model.get_weights()
         user_vectors = user_vectors[self.data['user'].unique()]
         item_vectors = item_vectors[self.data['item'].unique()]
@@ -88,9 +90,9 @@ class KerasVanillaMF:
         items = max(self.data['item'].unique())
 
         user_input = tf.keras.layers.Input((1, ), name='user')
-        user_vec = self.embedding(user_input, users, latent_dim, l2_rate)
+        user_vec = self.embedding(user_input, users, latent_dim, l2_rate, 'user_vec')
         item_input = tf.keras.layers.Input((1, ), name='item')
-        item_vec = self.embedding(item_input, items, latent_dim, l2_rate)
+        item_vec = self.embedding(item_input, items, latent_dim, l2_rate, 'item_vec')
         outputs = tf.keras.layers.Dot(axes=1)([user_vec, item_vec])
 
         model = tf.keras.models.Model([user_input, item_input], outputs)
@@ -114,7 +116,8 @@ class KerasVanillaMF:
                   last_layer,
                   input_dim,
                   latent_dim,
-                  l2_rate):
+                  l2_rate,
+                  name):
         input_length = 1
         regularizer = tf.keras.regularizers.l2(l2_rate)
         initializer = tf.keras\
@@ -126,4 +129,4 @@ class KerasVanillaMF:
                 input_length=input_length,
                 embeddings_initializer=initializer,
                 embeddings_regularizer=regularizer)(last_layer)
-        return tf.keras.layers.Flatten()(embedding)
+        return tf.keras.layers.Flatten(name=name)(embedding)

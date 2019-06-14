@@ -58,7 +58,3 @@ def main():
     model.recommend(num_rec_items)
     print(model.data.head())
     print(model.result.head())
-
-
-if __name__ == '__main__':
-    main()

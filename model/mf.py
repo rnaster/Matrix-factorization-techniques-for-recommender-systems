@@ -141,10 +141,7 @@ class VanillaMF(Visualization):
 
     def recommend(self, num_rec_items):
         """
-        excluding the observed items,
-         recommend num_rec_items items for specific user.
-
-        :param num_rec_items: the number of item to recommend
+        do recommend num_rec_items items excluding the observed items.
         """
         mask_matrix = self.data.pivot('user', 'item', 'rating').fillna(0) == 0
         columns = np.sort(self.data['item'].unique())
