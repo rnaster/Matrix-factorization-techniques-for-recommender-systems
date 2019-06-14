@@ -23,10 +23,10 @@ Please, refer to above link if you want description.
 ---
 
 ### Experimental Environment
-- numpy
-- pandas
-- tensorflow
-- matplotlib
+- numpy == 1.16.4
+- pandas == 0.24.2
+- tensorflow == 1.14.0-rc1
+- matplotlib == 3.0.3
 ---
 
 ### Description
