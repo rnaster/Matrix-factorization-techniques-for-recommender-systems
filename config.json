@@ -1,0 +1,10 @@
+{
+  "mode": "cpu",
+  "data_path": "data/book_ratings.dat",
+  "epoch": 500,
+  "alpha": 1e-3,
+  "beta": 1e-2,
+  "dim": 2,
+  "num_rec_items": 3,
+  "verbose": 1
+}
